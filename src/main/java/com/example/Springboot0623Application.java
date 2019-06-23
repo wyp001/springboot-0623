@@ -80,27 +80,54 @@ public class Springboot0623Application extends WebSecurityConfigurerAdapter {
 
 
     //12-4-2 使用spring表达式配置访问权限
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.authorizeRequests()
+//                      // 使用Spring表达式限定只有角色ROLE_USER或者ROLE_ADMIN
+//                .antMatchers("/user/**").access("hasRole('USER') or hasRole('ADMIN')" )
+//                      // 设置访问权限给角色ROLE_ADMIN，要求是完整登录(非记住我登录)
+//                .antMatchers("/admin/welcome")
+//                .access("hasRole('ROLE_ADMIN') && isFullyAuthenticated()")
+//                       // 限定"/admin/welcome2"访问权限给角色ROLE_ADMIN，允许不完整登录
+//                .antMatchers("/admin/welcome2").access("hasAnyAuthority('ROLE_ADMIN')")
+//                       // 使用记住我的功能
+//                .and().rememberMe()
+//                       // 使用Spring Security默认的登录页面
+//                .and().formLogin()
+//                       // 启动HTTP基础验证
+//                .and().httpBasic();
+//    }
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                      // 使用Spring表达式限定只有角色ROLE_USER或者ROLE_ADMIN
-                .antMatchers("/user/**").access("hasRole('USER') or hasRole('ADMIN')" )
-                      // 设置访问权限给角色ROLE_ADMIN，要求是完整登录(非记住我登录)
-                .antMatchers("/admin/welcome")
-                .access("hasRole('ROLE_ADMIN') && isFullyAuthenticated()")
-                       // 限定"/admin/welcome2"访问权限给角色ROLE_ADMIN，允许不完整登录
-                .antMatchers("/admin/welcome2").access("hasAnyAuthority('ROLE_ADMIN')")
-                       // 使用记住我的功能
-                .and().rememberMe()
-                       // 使用Spring Security默认的登录页面
-                .and().formLogin()
-                       // 启动HTTP基础验证
-                .and().httpBasic();
+        http
+                /**
+                 * 具体就是框架内部防止CSRF（Cross-site request forgery跨站请求伪造）的发生，
+                 * 限制了除了get以外的大多数方法。
+                 */
+                .csrf().disable()//关闭csrf认证（不建议关闭，此处不不关闭测试时出现异常，原因不详，所以此处先关闭）
+                .authorizeRequests().antMatchers("/admin/**").access("hasRole('ADMIN')")
+                .and().rememberMe().tokenValiditySeconds(86400).key("remember-me-key")
+                .and().httpBasic()
+                .and().authorizeRequests().antMatchers("/**").permitAll()
+                .and().formLogin().loginPage("/login/page")
+                .defaultSuccessUrl("/admin/welcome1");
     }
 
 
-
-
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeRequests().antMatchers("/admin/**")
+//                    .access("hasRole('ADMIN')")
+//                .and().authorizeRequests()
+//                    .antMatchers("/**").permitAll()
+//                .and().formLogin().loginPage("/login/page")
+//                    .defaultSuccessUrl("/admin/welcome1")
+//                .and().logout().logoutUrl("/logout/page")
+//                    .logoutSuccessUrl("welcome");
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(Springboot0623Application.class, args);
