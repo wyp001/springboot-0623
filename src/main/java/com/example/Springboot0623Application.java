@@ -55,26 +55,46 @@ public class Springboot0623Application extends WebSecurityConfigurerAdapter {
 
 
 
-    //
+    //12-4-1使用Abt风格配置限定请求路径访问权限
+//    protected void configure(HttpSecurity http) throws Exception {
+//        //限定签名后的权限
+//        http
+//                    /* ########第一段######## */
+//                .authorizeRequests()
+//                     // 限定"/user/welcome"请求赋予角色ROLE_USER或者ROLE_ADMIN
+//                .antMatchers("/user/welcome","/user/details").hasAnyRole("USER","ADMIN")
+//                      // 限定"/admin/"下所有请求权限赋予角色ROLE_ADMIN
+//                .antMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
+//                       // 其他路径允许签名后访问
+//                .anyRequest().permitAll()
+//                        /* ######## 第二段 ######## */
+//                        /** and代表连接词 **/
+//                      // 对于没有配置权限的其他请求允许匿名访问
+//                .and().formLogin()
+//                       // /* ######## 第三段 ######## */
+//                       // // 使用Spring Security默认的登录页面
+//                .and().anonymous()
+//                    // 启动HTTP基础验证
+//                .and().httpBasic();
+//    }
+
+
+    //12-4-2 使用spring表达式配置访问权限
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //限定签名后的权限
-        http
-                    /* ########第一段######## */
-                .authorizeRequests()
-                     // 限定"/user/welcome"请求赋予角色ROLE_USER或者ROLE_ADMIN
-                .antMatchers("/user/welcome","/user/details").hasAnyRole("USER","ADMIN")
-                      // 限定"/admin/"下所有请求权限赋予角色ROLE_ADMIN
-                .antMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                       // 其他路径允许签名后访问
-                .anyRequest().permitAll()
-                        /* ######## 第二段 ######## */
-                        /** and代表连接词 **/
-                      // 对于没有配置权限的其他请求允许匿名访问
+        http.authorizeRequests()
+                      // 使用Spring表达式限定只有角色ROLE_USER或者ROLE_ADMIN
+                .antMatchers("/user/**").access("hasRole('USER') or hasRole('ADMIN')" )
+                      // 设置访问权限给角色ROLE_ADMIN，要求是完整登录(非记住我登录)
+                .antMatchers("/admin/welcome")
+                .access("hasRole('ROLE_ADMIN') && isFullyAuthenticated()")
+                       // 限定"/admin/welcome2"访问权限给角色ROLE_ADMIN，允许不完整登录
+                .antMatchers("/admin/welcome2").access("hasAnyAuthority('ROLE_ADMIN')")
+                       // 使用记住我的功能
+                .and().rememberMe()
+                       // 使用Spring Security默认的登录页面
                 .and().formLogin()
-                       // /* ######## 第三段 ######## */
-                       // // 使用Spring Security默认的登录页面
-                .and().anonymous()
-                    // 启动HTTP基础验证
+                       // 启动HTTP基础验证
                 .and().httpBasic();
     }
 
