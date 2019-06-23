@@ -11,5 +11,16 @@ public class WelcomeController {
         return "welcome";
     }
 
+    @GetMapping("/user/welcome")
+    public String userWelcome() {
+        return "welcome";
+    }
+
+    @GetMapping("/admin/welcome")
+    public String adminWelcome() {
+        return "welcome";
+    }
+
+
 
 }

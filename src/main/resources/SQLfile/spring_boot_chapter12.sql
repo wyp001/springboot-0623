@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50716
 File Encoding         : 65001
 
-Date: 2019-06-23 17:16:15
+Date: 2019-06-23 18:04:53
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -24,12 +24,13 @@ CREATE TABLE `t_role` (
   `role_name` varchar(255) DEFAULT NULL,
   `note` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_role
 -- ----------------------------
-INSERT INTO `t_role` VALUES ('1', 'a', '啊');
+INSERT INTO `t_role` VALUES ('1', 'ROLE_ADMIN', '啊');
+INSERT INTO `t_role` VALUES ('2', 'ROLE_USER', null);
 
 -- ----------------------------
 -- Table structure for t_user
@@ -61,9 +62,11 @@ CREATE TABLE `t_user_role` (
   `role_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_user_role
 -- ----------------------------
 INSERT INTO `t_user_role` VALUES ('1', '1', '1');
+INSERT INTO `t_user_role` VALUES ('2', '2', '1');
+INSERT INTO `t_user_role` VALUES ('3', '2', '2');

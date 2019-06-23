@@ -25,14 +25,14 @@ public class UserRoleServiceImpl implements UserRoleService {
 	private RoleDao roleDao = null;
 
 	@Override
-	@Cacheable(value = "redisCache", key = "'redis_user_'+#userName")
+//	@Cacheable(value = "redisCache", key = "'redis_user_'+#userName")
 	@Transactional
 	public DatabaseUser getUserByName(String userName) {
 		return userDao.getUser(userName);
 	}
 
 	@Override
-	@Cacheable(value = "redisCache", key = "'redis_user_role_'+#userName")
+//	@Cacheable(value = "redisCache", key = "'redis_user_role_'+#userName")
 	@Transactional
 	public List<DatabaseRole> findRolesByUserName(String userName) {
 		return roleDao.findRolesByUserName(userName);
