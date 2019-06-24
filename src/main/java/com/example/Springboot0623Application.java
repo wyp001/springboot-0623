@@ -99,35 +99,40 @@ public class Springboot0623Application extends WebSecurityConfigurerAdapter {
 //    }
 
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                /**
-                 * 具体就是框架内部防止CSRF（Cross-site request forgery跨站请求伪造）的发生，
-                 * 限制了除了get以外的大多数方法。
-                 */
-                .csrf().disable()//关闭csrf认证（不建议关闭，此处不不关闭测试时出现异常，原因不详，所以此处先关闭）
-                .authorizeRequests().antMatchers("/admin/**").access("hasRole('ADMIN')")
-                .and().rememberMe().tokenValiditySeconds(86400).key("remember-me-key")
-                .and().httpBasic()
-                .and().authorizeRequests().antMatchers("/**").permitAll()
-                .and().formLogin().loginPage("/login/page")
-                .defaultSuccessUrl("/admin/welcome1");
-    }
-
-
 //    @Override
 //    protected void configure(HttpSecurity http) throws Exception {
 //        http
-//                .authorizeRequests().antMatchers("/admin/**")
-//                    .access("hasRole('ADMIN')")
-//                .and().authorizeRequests()
-//                    .antMatchers("/**").permitAll()
+//                /**
+//                 * 具体就是框架内部防止CSRF（Cross-site request forgery跨站请求伪造）的发生，
+//                 * 限制了除了get以外的大多数方法。
+//                 */
+//                .csrf().disable()//关闭csrf认证（不建议关闭，此处不不关闭测试时出现异常，原因不详，所以此处先关闭）
+//                .authorizeRequests().antMatchers("/admin/**").access("hasRole('ADMIN')")
+//                .and().rememberMe().tokenValiditySeconds(86400).key("remember-me-key")
+//                .and().httpBasic()
+//                .and().authorizeRequests().antMatchers("/**").permitAll()
 //                .and().formLogin().loginPage("/login/page")
-//                    .defaultSuccessUrl("/admin/welcome1")
-//                .and().logout().logoutUrl("/logout/page")
-//                    .logoutSuccessUrl("welcome");
+//                .defaultSuccessUrl("/admin/welcome1");
 //    }
+
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                      // 访问/admin下的请求需要管理员权限
+                .authorizeRequests().antMatchers("/admin/**")
+                .access("hasRole('ADMIN')")
+                      // 通过签名后可以访问任何请求
+                .and().authorizeRequests()
+                .antMatchers("/**").permitAll()
+                      // 设置登录页和默认的跳转路径
+                .and().formLogin().loginPage("/login/page")
+                .defaultSuccessUrl("/admin/welcome1")
+                       // 登出页面和默认跳转路径
+                .and().logout().logoutUrl("/logout/page")
+                .logoutSuccessUrl("/welcome");
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(Springboot0623Application.class, args);
